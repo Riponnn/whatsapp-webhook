@@ -34,7 +34,8 @@ async function sendLeadEvent(phone, timestamp, referral) {
         event_time: parseInt(timestamp),
         action_source: 'business_messaging',
         messaging_channel: 'whatsapp',
-        user_data: userData
+        user_data: userData,
+        test_event_code: process.env.TEST_CODE
       }
     ]
   };
