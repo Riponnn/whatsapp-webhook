@@ -20,7 +20,7 @@ async function sendLeadEvent(phone, timestamp) {
   const payload = {
     data: [
       {
-        event_name: 'Lead',
+        event_name: 'LeadSubmitted',
         event_time: parseInt(timestamp),
         action_source: 'business_messaging',
         messaging_channel: 'whatsapp',
