@@ -23,6 +23,7 @@ async function sendLeadEvent(phone, timestamp) {
         event_name: 'Lead',
         event_time: parseInt(timestamp),
         action_source: 'business_messaging',
+        messaging_channel: 'whatsapp',
         user_data: {
           ph: [hashPhone(phone)]
         }
