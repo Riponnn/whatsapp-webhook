@@ -20,7 +20,7 @@ async function sendLeadEvent(phone, timestamp, referral) {
 
   const userData = {
     ph: [hashPhone(phone)],
-    page_id: WABA_ID
+    page_id: 123458745214587
   };
 
   if (ctwaClid) {
