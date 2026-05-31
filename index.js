@@ -8,15 +8,25 @@ app.use(express.json());
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN || 'secret2244';
 const PIXEL_ID = process.env.PIXEL_ID;
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
+const WABA_ID = process.env.WABA_ID;
 
-// Phone number hash করার function
 function hashPhone(phone) {
   const cleaned = phone.replace(/\D/g, '');
   return crypto.createHash('sha256').update(cleaned).digest('hex');
 }
 
-// Meta CAPI-তে Lead event পাঠানোর function
-async function sendLeadEvent(phone, timestamp) {
+async function sendLeadEvent(phone, timestamp, referral) {
+  const ctwaClid = referral?.ctwa_clid || null;
+
+  const userData = {
+    ph: [hashPhone(phone)],
+    page_id: WABA_ID
+  };
+
+  if (ctwaClid) {
+    userData.ctwa_clid = ctwaClid;
+  }
+
   const payload = {
     data: [
       {
@@ -24,10 +34,7 @@ async function sendLeadEvent(phone, timestamp) {
         event_time: parseInt(timestamp),
         action_source: 'business_messaging',
         messaging_channel: 'whatsapp',
-        user_data: {
-          ph: [hashPhone(phone)],
-          page_id: process.env.WABA_ID
-        }
+        user_data: userData
       }
     ]
   };
@@ -43,7 +50,6 @@ async function sendLeadEvent(phone, timestamp) {
   }
 }
 
-// Webhook verification
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
@@ -55,7 +61,6 @@ app.get('/webhook', (req, res) => {
   res.sendStatus(403);
 });
 
-// Incoming WhatsApp messages
 app.post('/webhook', async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
@@ -68,10 +73,16 @@ app.post('/webhook', async (req, res) => {
       const message = messages[0];
       const phone = message.from;
       const timestamp = message.timestamp;
+      const referral = message.referral || {};
 
       console.log('Lead detected - Phone:', phone);
+      if (referral.ctwa_clid) {
+        console.log('CTWA clid found:', referral.ctwa_clid);
+      } else {
+        console.log('No CTWA clid - organic or test message');
+      }
 
-      await sendLeadEvent(phone, timestamp);
+      await sendLeadEvent(phone, timestamp, referral);
     }
   } catch (err) {
     console.log('Error processing message:', err.message);
