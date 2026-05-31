@@ -25,7 +25,8 @@ async function sendLeadEvent(phone, timestamp) {
         action_source: 'business_messaging',
         messaging_channel: 'whatsapp',
         user_data: {
-          ph: [hashPhone(phone)]
+          ph: [hashPhone(phone)],
+          page_id: process.env.WABA_ID
         }
       }
     ]
