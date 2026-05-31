@@ -8,7 +8,7 @@ app.use(express.json());
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN || 'secret2244';
 const PIXEL_ID = process.env.PIXEL_ID;
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
-const WABA_ID = process.env.WABA_ID;
+const PAGE_ID = process.env.PAGE_ID;
 
 function hashPhone(phone) {
   const cleaned = phone.replace(/\D/g, '');
@@ -16,11 +16,11 @@ function hashPhone(phone) {
 }
 
 async function sendLeadEvent(phone, timestamp, referral) {
-  const ctwaClid = referral?.ctwa_clid || 'test_clid_123';
+  const ctwaClid = referral?.ctwa_clid || null;
 
   const userData = {
     ph: [hashPhone(phone)],
-    page_id: 123458745214587
+    page_id: PAGE_ID
   };
 
   if (ctwaClid) {
@@ -76,6 +76,7 @@ app.post('/webhook', async (req, res) => {
       const referral = message.referral || {};
 
       console.log('Lead detected - Phone:', phone);
+
       if (referral.ctwa_clid) {
         console.log('CTWA clid found:', referral.ctwa_clid);
       } else {
