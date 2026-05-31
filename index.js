@@ -9,6 +9,7 @@ const VERIFY_TOKEN = process.env.VERIFY_TOKEN || 'secret2244';
 const PIXEL_ID = process.env.PIXEL_ID;
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
 const PAGE_ID = process.env.PAGE_ID;
+const TEST_CODE = process.env.TEST_CODE;
 
 function hashPhone(phone) {
   const cleaned = phone.replace(/\D/g, '');
@@ -34,10 +35,10 @@ async function sendLeadEvent(phone, timestamp, referral) {
         event_time: parseInt(timestamp),
         action_source: 'business_messaging',
         messaging_channel: 'whatsapp',
-        user_data: userData,
-        test_event_code: process.env.TEST_CODE
+        user_data: userData
       }
-    ]
+    ],
+    test_event_code: TEST_CODE
   };
 
   try {
