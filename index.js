@@ -16,7 +16,7 @@ function hashPhone(phone) {
 }
 
 async function sendLeadEvent(phone, timestamp, referral) {
-  const ctwaClid = referral?.ctwa_clid || null;
+  const ctwaClid = referral?.ctwa_clid || 'test_clid_123';
 
   const userData = {
     ph: [hashPhone(phone)],
